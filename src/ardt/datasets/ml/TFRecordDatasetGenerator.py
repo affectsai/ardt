@@ -34,6 +34,7 @@ import numpy as np
 import queue
 import traceback
 
+from ardt.datasets.AERTrial import TruthType, AERTrial
 from ardt.datasets.AERDataset import AERDataset
 from tqdm import tqdm
 import multiprocessing
@@ -78,7 +79,7 @@ class TFRecordDatasetGenerator:
             "label": tf.io.FixedLenFeature([], tf.int64),  # Scalar label
         }
 
-    def get_tf_record_dataset(self, generate_if_needed=False, num_parallel_calls=tf.data.AUTOTUNE, options=None, cache: Union[bool,PathLike] = True, shuffle_buffer_size=None, repeat: int = 1, batch_size=None, batch_drop_remainder=True, **kwargs) -> tf.data.Dataset:
+    def get_tf_record_dataset(self, generate_if_needed=False, num_parallel_calls=tf.data.AUTOTUNE, options=None, cache: Union[bool,PathLike] = True, shuffle_buffer_size=None, repeat: int = 1, batch_size=None, batch_drop_remainder=True, prefetch=False, **kwargs) -> tf.data.Dataset:
         '''
         Creates a TFRecordDataset from the tfrecord file located at `self._tfrecord_filename`. If it does not exist, and
         if `generate_if_needed` is `True`, then `self.generate(...)` will be called to generate the tfrecord file. Options to
@@ -121,6 +122,9 @@ class TFRecordDatasetGenerator:
         if batch_size is not None:
             tfds = tfds.batch(batch_size, num_parallel_calls=tf.data.AUTOTUNE, drop_remainder=batch_drop_remainder)
 
+        if prefetch:
+            tfds = tfds.prefetch(buffer_size=tf.data.AUTOTUNE)
+
         return tfds
 
     def _parse_record(self, record_proto):
@@ -128,7 +132,7 @@ class TFRecordDatasetGenerator:
         return record["signal"], record["label"]
 
 
-    def generate(self, use_expected_response=False, one_channel_per_record=True, queue_depth=10, num_workers=None):
+    def generate(self, use_expected_response=False, truth=TruthType.QUADRANT, one_channel_per_record=True, queue_depth=10, num_workers=None):
         '''
         Generates a TFRecord file containing each trial in the AERDataset
 
@@ -157,7 +161,7 @@ class TFRecordDatasetGenerator:
             trial_batches = np.array_split(self._aer_dataset.trials, num_workers)
             # Start worker processes
             with multiprocessing.Pool(processes=num_workers) as pool:
-                pool.starmap(self._process_trial_batch, [(trial_batch, record_queue, use_expected_response, one_channel_per_record) for trial_batch in trial_batches])
+                pool.starmap(self._process_trial_batch, [(trial_batch, record_queue, use_expected_response, truth, one_channel_per_record) for trial_batch in trial_batches])
         except Exception as e:
             print(f"Exception occurred while processing trials: {e.__class__.__name__}: {e}")
             traceback.print_exc()  # Prints full traceback
@@ -189,15 +193,18 @@ class TFRecordDatasetGenerator:
 
         print(f"TFRecord writing complete: {self._tfrecord_filename}")
 
-    def _process_trial_batch(self, trial_batch, queue, use_expected_response, one_channel_per_record):
+    def _process_trial_batch(self, trial_batch, queue, use_expected_response, truth, one_channel_per_record):
         for trial in trial_batch:
-            self._process_trial(trial, queue, use_expected_response, one_channel_per_record)
+            self._process_trial(trial, queue, use_expected_response, truth, one_channel_per_record)
 
-    def _process_trial(self, trial, queue, use_expected_response, one_channel_per_record):
+    def _process_trial(self, trial, queue, use_expected_response, truth, one_channel_per_record):
         """Processes a single trial and adds serialized TFRecord entries to the queue."""
         label = trial.expected_response if use_expected_response else trial.load_ground_truth()
         label = 0 if label is None else label  # Convert None to 0
 
+        newlabel = label if truth == TruthType.QUADRANT else AERTrial.quadrant_to_valence(label) if truth == TruthType.VALENCE else AERTrial.quadrant_to_arousal(label)
+
+        label = newlabel
         for signal_type in self._signal_types:
             signal_data = trial.load_signal_data(signal_type)
             if self._signal_len != 0 and signal_data.shape[1] != self._signal_len:

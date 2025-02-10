@@ -15,6 +15,7 @@
 import random
 import unittest
 
+from ardt.datasets.AERTrial import TruthType
 from ardt.datasets.dreamer.DreamerDataset import (DEFAULT_DREAMER_PATH, DEFAULT_DREAMER_FILENAME,
                                                   DREAMER_NUM_MEDIA_FILES, DREAMER_NUM_PARTICIPANTS)
 from ardt.datasets.dreamer.DreamerDataset import DreamerDataset
@@ -131,6 +132,26 @@ class DreamerDatasetTest(unittest.TestCase):
         for trial in self.dataset.trials:
             self.assertIsNotNone(trial.expected_response)
 
+    def test_arousal(self):
+        for trial in self.dataset.trials:
+            quad = trial.load_ground_truth()
+            if quad == 1 or quad == 2:
+                self.assertEqual(1, trial.load_ground_truth(truth=TruthType.AROUSAL))
+            elif quad == 3 or quad == 4:
+                self.assertEqual(0, trial.load_ground_truth(truth=TruthType.AROUSAL))
+            else:
+                self.fail("Unknown trial type: " + str(quad))
+
+
+    def test_valence(self):
+        for trial in self.dataset.trials:
+            quad = trial.load_ground_truth()
+            if quad == 1 or quad == 4:
+                self.assertEqual(2, trial.load_ground_truth(truth=TruthType.VALENCE))
+            elif quad == 2 or quad == 3:
+                self.assertEqual(1, trial.load_ground_truth(truth=TruthType.VALENCE))
+            else:
+                self.fail("Unknown trial type: " + str(quad))
 
 if __name__ == '__main__':
     unittest.main()

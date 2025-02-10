@@ -14,10 +14,20 @@
 
 
 import abc
-
 import numpy as np
 
 from ardt.datasets import AERDataset
+from enum import Enum, auto
+
+
+class TruthType(Enum):
+    QUADRANT = auto()
+    AROUSAL = auto()
+    VALENCE = auto()
+    NEUTRAL = auto()
+
+
+
 
 
 class AERTrial(abc.ABC):
@@ -43,6 +53,13 @@ class AERTrial(abc.ABC):
         self._signal_data_files = {}
         self._movie_id = movie_id
 
+    @staticmethod
+    def quadrant_to_arousal(q):
+        return 2 if q == 1 or q == 2 else 1
+
+    @staticmethod
+    def quadrant_to_valence(q):
+        return 2 if q == 1 or q == 4 else 1
 
     def load_preprocessed_signal_data(self,signal_type: str):
         '''
@@ -78,7 +95,7 @@ class AERTrial(abc.ABC):
         return np.empty(0)
 
     @abc.abstractmethod
-    def load_ground_truth(self):
+    def load_ground_truth(self, truth=TruthType.QUADRANT):
         """
         Returns the ground truth label for this trial. For AER trials, this is the quadrant within the A/V space,
         numbered 0 through 3 as follows:

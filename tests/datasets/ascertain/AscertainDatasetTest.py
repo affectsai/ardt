@@ -18,6 +18,7 @@ import unittest
 from pathlib import Path
 
 import numpy as np
+from ardt.datasets.AERTrial import TruthType
 
 from ardt.datasets.ascertain import AscertainDataset
 from ardt.datasets.ascertain.AscertainDataset import DEFAULT_ASCERTAIN_PATH, ASCERTAIN_NUM_MEDIA_FILES, \
@@ -192,6 +193,26 @@ class AscertainDatasetTest(unittest.TestCase):
         self.assertEqual(len(media_ids), len(self.dataset.expected_media_responses))
         for trial in self.dataset.trials:
             self.assertIsNotNone(trial.expected_response)
+
+    def test_arousal(self):
+        for trial in self.dataset.trials:
+            quad = trial.load_ground_truth()
+            if quad == 1 or quad == 2:
+                self.assertEqual(2, trial.load_ground_truth(truth=TruthType.AROUSAL))
+            elif quad == 3 or quad == 4:
+                self.assertEqual(1, trial.load_ground_truth(truth=TruthType.AROUSAL))
+            else:
+                self.fail("Unknown trial type: " + str(quad))
+
+    def test_valence(self):
+        for trial in self.dataset.trials:
+            quad = trial.load_ground_truth()
+            if quad == 1 or quad == 4:
+                self.assertEqual(2, trial.load_ground_truth(truth=TruthType.VALENCE))
+            elif quad == 2 or quad == 3:
+                self.assertEqual(1, trial.load_ground_truth(truth=TruthType.VALENCE))
+            else:
+                self.fail("Unknown trial type: " + str(quad))
 
 if __name__ == '__main__':
     unittest.main()

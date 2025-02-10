@@ -16,6 +16,8 @@ import numpy as np
 from ardt.datasets import AERTrial
 from pathlib import Path
 
+from ardt.datasets.AERTrial import TruthType
+
 DREAMER_ECG_SAMPLE_RATE = 256
 DREAMER_ECG_N_CHANNELS = 2
 
@@ -53,14 +55,22 @@ class DreamerTrial(AERTrial):
             dataset_meta['duration'] = self._ecg_signal_duration
         return dataset_meta
 
-    def load_ground_truth(self):
+    def load_ground_truth(self, truth=TruthType.QUADRANT):
         participant_path = self.dataset.get_working_path(self.participant_id)
         if participant_path is None:
             return 0
 
         ar=np.load(participant_path / Path('arousal.npy'))
         va=np.load(participant_path / Path('valence.npy'))
-        return self._to_quadrant(ar[self.media_id - self.dataset.media_file_offset - 1], va[self.media_id - self.dataset.media_file_offset - 1])
+        quad = self._to_quadrant(ar[self.media_id - self.dataset.media_file_offset - 1], va[self.media_id - self.dataset.media_file_offset - 1])
+
+        response = quad
+        if truth == TruthType.AROUSAL:
+            response = AERTrial.quadrant_to_arousal(quad)
+        elif truth == TruthType.VALENCE:
+            response = AERTrial.quadrant_to_valence(quad)
+
+        return response
 
     def get_signal_metadata(self, signal_type):
         dataset_meta = self.dataset.get_signal_metadata(signal_type)

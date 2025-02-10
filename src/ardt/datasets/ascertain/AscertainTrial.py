@@ -18,6 +18,7 @@ import numpy as np
 import scipy.io
 
 from ardt.datasets import AERTrial
+from ardt.datasets.AERTrial import TruthType
 
 ASCERTAIN_ECG_SAMPLE_RATE = 256
 ASCERTAIN_ECG_N_CHANNELS = 2
@@ -29,8 +30,15 @@ class AscertainTrial(AERTrial):
         self._ecg_signal_duration = None
         self._truth = quadrant
 
-    def load_ground_truth(self):
-        return self._truth
+    def load_ground_truth(self, truth=TruthType.QUADRANT):
+        quad = self._truth
+        response = quad
+        if truth == TruthType.AROUSAL:
+            response = AERTrial.quadrant_to_arousal(quad)
+        elif truth == TruthType.VALENCE:
+            response = AERTrial.quadrant_to_valence(quad)
+
+        return response
 
     def get_signal_metadata(self, signal_type):
         dataset_meta = self.dataset.get_signal_metadata(signal_type)
