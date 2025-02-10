@@ -229,7 +229,6 @@ class AscertainDataset(AERDataset):
                 dataset_participant_id=dataset_participant_id,
                 dataset_media_id=dataset_movie_id,
                 signal_type=signal_type)
-            print(preload_data_path)
             np.save(preload_data_path, data)
 
 
