@@ -129,7 +129,7 @@ class AscertainDatasetTest(unittest.TestCase):
             min_id = min(min_id, media_id)
             max_id = max(max_id, media_id)
 
-        self.assertEqual(MEDIAFILE_OFFSET + 1, min_id)
+        self.assertEqual(self.dataset.media_file_offset + 1, min_id)
         self.assertEqual(ASCERTAIN_NUM_MEDIA_FILES, max_id - min_id + 1)
 
     def test_splits(self):

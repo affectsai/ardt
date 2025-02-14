@@ -277,8 +277,8 @@ class AscertainDataset(AERDataset):
 
         for participant_id in ascertain_datafiles:
             for movie_id in ascertain_datafiles[participant_id]:
-                arousal = dt_selfreports['Ratings'][0][participant_id - 1 - self.participant_offset][movie_id - 1 - self.media_file_offset]
-                valence = dt_selfreports['Ratings'][1][participant_id - 1 - self.participant_offset][movie_id - 1 - self.media_file_offset]
+                arousal = dt_selfreports['Ratings'][0][participant_id - 1][movie_id - 1]
+                valence = dt_selfreports['Ratings'][1][participant_id - 1][movie_id - 1]
 
                 trial = AscertainTrial(self, participant_id, movie_id, _to_quadrant(arousal, valence))
                 trial.signal_data_files = ascertain_datafiles[participant_id][movie_id]

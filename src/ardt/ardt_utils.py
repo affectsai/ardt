@@ -1,4 +1,4 @@
-#  Copyright (c) 2024. Affects AI LLC
+#  Copyright (c) 2025. Affects AI LLC
 #
 #  Licensed under the Creative Common CC BY-NC-SA 4.0 International License (the "License");
 #  you may not use this file except in compliance with the License. The full text of the License is
@@ -12,5 +12,19 @@
 #  express or implied. See the License for the specific language governing permissions and limitations
 #  under the License.
 
-from .config import config
-from .ardt_utils import ardt_deprecated
+import functools
+import warnings
+
+def ardt_deprecated(msg):
+    def actual_decorator(func):
+        @functools.wraps(func)
+        def wrapper(*args, **kwargs):
+            """Wrapper docstring"""
+            warnings.warn(f"Calling deprecated function {func.__name__}. {msg}",
+                          category=DeprecationWarning)
+            result = func(*args, **kwargs)
+            return result
+
+        return wrapper
+
+    return actual_decorator

@@ -19,11 +19,11 @@ from pathlib import Path
 import numpy as np
 import os
 
-from ardt import config
+from ardt import config, ardt_deprecated
 from pandas.io.sas.sas_constants import os_maker_length
 import random
 from itertools import zip_longest, cycle
-
+import warnings
 
 class AERDataset(metaclass=abc.ABCMeta):
     """
@@ -63,7 +63,7 @@ class AERDataset(metaclass=abc.ABCMeta):
     >>>     preprocessed_ecg = training_trial.load_signal_data('ECG')
     >>>     # do something with the preprocessed ecg signal.
     """
-    def __init__(self, signals=None, participant_offset=0, mediafile_offset=0, signal_metadata=None, expected_responses=None):
+    def __init__(self, signals=None, participant_offset=0, mediafile_offset=None, media_offset=None, signal_metadata=None, expected_responses=None):
         """
         Represents a class that manages multiple signals and related data, such
         as participant and media file offsets. This class is initialized
@@ -78,7 +78,7 @@ class AERDataset(metaclass=abc.ABCMeta):
         :ivar _signals: Internal storage for the list of signals.
         :ivar _signal_preprocessors: Dictionary for mapping signal processors.
         :ivar _participant_offset: Offset for participant identifiers.
-        :ivar _media_file_offset: Offset for media file identifiers.
+        :ivar _media_offset: Offset for media file identifiers.
         :ivar _participant_ids: Set that tracks unique participant IDs.
         :ivar _media_ids: Set that tracks unique media file IDs.
         :ivar _all_trials: List that contains information about all trials.
@@ -90,10 +90,17 @@ class AERDataset(metaclass=abc.ABCMeta):
         if expected_responses is None:
             expected_responses = {}
 
+        if media_offset is None and mediafile_offset is not None:
+            media_offset = mediafile_offset
+            warnings.warn("AERDataset initialization parameter mediafile_offset is deprecated, use media_offset instead. mediafile_offset may be removed in a future release.")
+
+        if media_offset is None:
+            media_offset = 0
+
         self._signals = signals
         self._signal_preprocessors = {}
         self._participant_offset = participant_offset
-        self._media_file_offset = mediafile_offset
+        self._media_offset = media_offset
         self._participant_ids = set()
         self._media_ids = set()
         self._all_trials = []
@@ -323,6 +330,10 @@ class AERDataset(metaclass=abc.ABCMeta):
         return set([trial.media_id for trial in self.trials])
 
     @property
+    def native_media_ids(self):
+        return [trial.media_id - self.media_offset for trial in self.trials]
+
+    @property
     def participant_ids(self):
         """
         Returns the collection of all participant identifiers associated with this AERDataset instance. The values
@@ -337,10 +348,23 @@ class AERDataset(metaclass=abc.ABCMeta):
         return set([trial.participant_id for trial in self.trials])
 
     @property
+    def native_participant_ids(self):
+        return [trial.participant_id - self.participant_offset for trial in self.trials]
+
+    @property
     def expected_media_responses(self):
         return self._expected_responses
 
     @property
+    def media_offset(self):
+        return self._media_offset
+
+    @media_offset.setter
+    def media_offset(self, offset):
+        self._media_offset = offset
+
+    @property
+    @ardt_deprecated("Use media_offset instead.")
     def media_file_offset(self):
         """
         The constant value added to all media identifiers within the underlying dataset. This is useful for when you
@@ -352,11 +376,12 @@ class AERDataset(metaclass=abc.ABCMeta):
 
         :return:
         """
-        return self._media_file_offset
+        return self._media_offset
 
     @media_file_offset.setter
+    @ardt_deprecated("Use media_offset instead.")
     def media_file_offset(self, media_file_offset):
-        self._media_file_offset = media_file_offset
+        self._media_offset = media_file_offset
 
     @property
     def participant_offset(self):

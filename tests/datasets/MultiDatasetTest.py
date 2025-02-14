@@ -54,6 +54,20 @@ class MultiDatasetTest(unittest.TestCase):
         self.dataset.preload()
         self.dataset.load_trials()
 
+    def test_multiset_random_order(self):
+        datasets = [self.ascertain_dataset, self.dreamer_dataset, self.cuads_dataset]
+        for i in range(len(datasets)):
+            local_dataset = MultiDataset(datasets)
+            local_dataset.set_signal_metadata('ECG', {'n_channels':2})
+            local_dataset.preload()
+            local_dataset.load_trials()
+            datasets.append(datasets.pop(0))
+
+            for trial in local_dataset.trials:
+                self.assertIn(trial.participant_id, trial.dataset.participant_ids)
+                self.assertIn(trial.media_id, trial.dataset.media_ids)
+
+
     def test_multiset_trial_count(self):
         """
         Asserts that the number of trials in the multiset is the same as the sum of the number of trials in each dataset.
@@ -77,7 +91,6 @@ class MultiDatasetTest(unittest.TestCase):
         """
         self.assertNotEqual(0, len(self.dataset.media_ids))
         self.assertEqual(len(self.ascertain_dataset.media_ids)+len(self.dreamer_dataset.media_ids)+len(self.cuads_dataset.media_ids), len(self.dataset.media_ids))
-
 
     def test_ecg_signal_load(self):
         """

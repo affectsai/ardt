@@ -158,6 +158,15 @@ class AERTrial(abc.ABC):
         self._signal_preprocessors = signal_preprocessors
 
     @property
+    def native_media_id(self):
+        """
+        The media_id used in the underlying dataset. This is not adjusted by media_offset if one is used.
+
+        :return:
+        """
+        return self._movie_id
+
+    @property
     def media_id(self):
         """
         The unique identifier for the media file, adjusted by the media file offset specified in the associated dataset.
@@ -167,7 +176,7 @@ class AERTrial(abc.ABC):
         :return: Returns the adjusted media file ID as an integer.
         :rtype: int
         """
-        return self._movie_id + self.dataset.media_file_offset
+        return self._movie_id + self.dataset.media_offset
 
     @property
     def media_name(self):
@@ -179,12 +188,21 @@ class AERTrial(abc.ABC):
         this method will just return self.media_id
         :return:
         '''
-        name = self.dataset.get_media_name_by_movie_id(self.media_id-self.dataset.media_file_offset)
+        name = self.dataset.get_media_name_by_movie_id(self.media_id-self.dataset.media_offset)
 
         if name is not None:
             return name
 
-        return self.media_id - self.dataset.media_file_offset
+        return self.media_id - self.dataset.media_offset
+
+    @property
+    def native_participant_id(self):
+        """
+        The native participant ID used in the underlying dataset, this is not offset by the participant_offset if one is used.
+
+        :return:
+        """
+        return self._participant_id
 
     @property
     def participant_id(self):
