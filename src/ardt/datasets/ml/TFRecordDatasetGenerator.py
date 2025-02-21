@@ -100,7 +100,7 @@ class TFRecordDatasetGenerator:
             if not generate_if_needed:
                 raise FileNotFoundError(f"{self._tfrecord_filename} does not exist. Check the path, or call generate() first to created it.")
             else:
-                self.generate(*kwargs.values())
+                self.generate(**kwargs)
 
         tfds = tf.data.TFRecordDataset(self._tfrecord_filename) \
             .map(self._parse_record, num_parallel_calls=num_parallel_calls)
