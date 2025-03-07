@@ -15,12 +15,13 @@
 import os
 import logging
 from pathlib import Path
+from typing import Optional, List
 
 import numpy as np
 import scipy
 
 from ardt import config
-from ardt.datasets import AERDataset
+from ardt.datasets import AERDataset, AERTrialFilter
 from .AscertainTrial import AscertainTrial
 from datetime import datetime, timedelta
 
@@ -232,7 +233,7 @@ class AscertainDataset(AERDataset):
             np.save(preload_data_path, data)
 
 
-    def load_trials(self):
+    def _load_trials(self, trial_filters: Optional[List[AERTrialFilter]] = None):
         # Load ascertain data files...
         # Map< participantId, Map< movieId, data_file_path >>
         ascertain_datafiles = {}
@@ -283,6 +284,7 @@ class AscertainDataset(AERDataset):
                 trial = AscertainTrial(self, participant_id, movie_id, _to_quadrant(arousal, valence))
                 trial.signal_data_files = ascertain_datafiles[participant_id][movie_id]
                 trial.signal_preprocessors = self.signal_preprocessors
+
                 self.trials.append(trial)
 
     def get_media_name_by_movie_id(self, movie_id):

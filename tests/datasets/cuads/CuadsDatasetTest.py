@@ -18,6 +18,8 @@ import unittest
 from pathlib import Path
 
 import numpy as np
+
+from ardt.datasets import AERTrialFilter
 from ardt.datasets.AERTrial import TruthType
 
 from ardt.datasets.cuads import CuadsDataset
@@ -119,6 +121,27 @@ class CuadsDatasetTest(unittest.TestCase):
                 self.assertEqual(1, trial.load_ground_truth(truth=TruthType.VALENCE))
             else:
                 self.fail("Unknown trial type: " + str(quad))
+
+    def test_trial_filters(self):
+        localds = CuadsDataset(None, 0, 0)
+        localds.preload()
+
+        num_media_ids = random.randint(2,5)
+        num_participant_ids = random.randint(5,10)
+
+        mediaids_to_filter_out = random.choices(np.arange(1,CUADS_NUM_MEDIA_FILES), k=num_media_ids)
+        participants_to_filter_out = random.choices(np.arange(1,CUADS_NUM_PARTICIPANTS), k=num_participant_ids)
+
+        participant_id_filter = AERTrialFilter(lambda x: x.participant_id not in participants_to_filter_out)
+        media_id_filter = AERTrialFilter(lambda x: x.media_id not in mediaids_to_filter_out)
+        localds.load_trials(trial_filters=[participant_id_filter, media_id_filter])
+
+        self.assertEqual(1, min(localds.media_ids))
+        self.assertEqual(1, min(localds.participant_ids))
+        self.assertEqual(len(localds.media_ids), max(localds.media_ids))
+        self.assertEqual(len(localds.participant_ids), max(localds.participant_ids))
+
+        pass
 
 if __name__ == '__main__':
     unittest.main()

@@ -19,16 +19,11 @@ import numpy as np
 from ardt.datasets import AERDataset
 from enum import Enum, auto
 
-
 class TruthType(Enum):
     QUADRANT = auto()
     AROUSAL = auto()
     VALENCE = auto()
     NEUTRAL = auto()
-
-
-
-
 
 class AERTrial(abc.ABC):
     def __init__(self, dataset: AERDataset, participant_id: int, movie_id: int):
@@ -51,7 +46,7 @@ class AERTrial(abc.ABC):
         self._signal_types = set()
         self._signal_preprocessors = {}
         self._signal_data_files = {}
-        self._movie_id = movie_id
+        self._media_id = movie_id
 
     @staticmethod
     def quadrant_to_arousal(q):
@@ -164,7 +159,7 @@ class AERTrial(abc.ABC):
 
         :return:
         """
-        return self._movie_id
+        return self._media_id
 
     @property
     def media_id(self):
@@ -176,7 +171,7 @@ class AERTrial(abc.ABC):
         :return: Returns the adjusted media file ID as an integer.
         :rtype: int
         """
-        return self._movie_id + self.dataset.media_offset
+        return self._media_id + self.dataset.media_offset
 
     @property
     def media_name(self):

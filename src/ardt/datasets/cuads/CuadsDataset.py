@@ -181,7 +181,7 @@ class CuadsDataset(AERDataset):
                 data = data.transpose()
                 np.save(path, data)
 
-    def load_trials(self):
+    def _load_trials(self):
         response_movie_name = 0
         response_valence = 1
         response_arousal = 2

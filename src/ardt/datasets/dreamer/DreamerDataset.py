@@ -132,7 +132,7 @@ class DreamerDataset(AERDataset):
                         np.save(media_path / Path(f'{signal}_stimuli.npy'), stimuli_signal_data[c])
                         np.save(media_path / Path(f'{signal}_baseline.npy'), baseline_signal_data[c])
 
-    def load_trials(self):
+    def _load_trials(self):
         for p in range(DREAMER_NUM_PARTICIPANTS):
             participant_id = p+1
             for c in range(DREAMER_NUM_MEDIA_FILES):
