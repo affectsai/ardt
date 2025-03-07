@@ -37,7 +37,7 @@ class MultiDataset(AERDataset):
         for dataset in self._datasets:
             dataset.preload()
 
-    def load_trials(self):
+    def _load_trials(self):
         num_participants = 0
         num_mediafiles = 0
         for dataset in self._datasets:

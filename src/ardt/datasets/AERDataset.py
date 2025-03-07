@@ -15,15 +15,20 @@
 
 import abc
 from pathlib import Path
+from typing import List, Optional
 
 import numpy as np
 import os
 
 from ardt import config, ardt_deprecated
+from .AERTrialFilter import AERTrialFilter
+
 from pandas.io.sas.sas_constants import os_maker_length
 import random
 from itertools import zip_longest, cycle
 import warnings
+
+
 
 class AERDataset(metaclass=abc.ABCMeta):
     """
@@ -157,21 +162,62 @@ class AERDataset(metaclass=abc.ABCMeta):
         pass
 
     @abc.abstractmethod
-    def load_trials(self):
+    def _load_trials(self, trial_filters: Optional[List[AERTrialFilter]] = None):
         """
         Loads the AERTrials from the preloaded dataset into memory. This method should load all relevant trials from
         the dataset. To avoid memory utilization issues, it is strongly recommended to defer loading signal data into
         the AERTrial until that AERTrial's load_signal_data method is called.
 
-        During load_trials, implementations should populate `self.trials`. Trial participant and media identifiers must
-        be numbered sequentially from 1 to N where N is the number of participants or media files in the dataset
-
-        The participant_ids and media_ids sets will be inferred from the trials loaded by this method.
-
         See subclasses for dataset-specific details.
         :return:
         """
         pass
+
+    def load_trials(self, trial_filters: Optional[List[AERTrialFilter]] = None):
+        """
+        This method calls self._load_trials to load all trials in this dataset. After all trials are loaded, the
+        trials will be filtered according to the trial_filters list. If a trial does not pass all filters, it will
+        be removed from the AERDataset.
+
+        Once the filters are complete, the participant_ids and media_ids will be normalized so that they are numbered
+        sequentially from 1 to N, where N is the number of participants or media files remaining in the dataset after
+        it was filtered.
+
+        The participant_ids and media_ids sets will be inferred from the trials loaded by this method.
+
+        :param trial_filters:
+        :return:
+        """
+        self._load_trials()
+
+        # If we have no filters, we're done.
+        if trial_filters is None or len(trial_filters) == 0:
+            return
+
+        all_loaded_trials = list(self.trials)
+
+        # Filter the trials
+        self.trials.clear()
+        self.trials.extend(
+            [trial for trial in all_loaded_trials if all(trial_filter.filter(trial) for trial_filter in trial_filters)]
+        )
+
+        # Some datasets may not have sequentially numbered participants or media files.. Even if they do, some may start
+        # from 0 where others may start from 1. Additionally, the filters may have removed entire participants of
+        # media ids from the dataset.
+        #
+        # Normalize the remaining participant_ids and media_ids so they are numbered sequentially starting from 1
+        normalized_participant_ids = {}
+        normalized_media_ids = {}
+        for trial in self.trials:
+            if trial.participant_id not in normalized_participant_ids:
+                normalized_participant_ids[trial.participant_id] = len(normalized_participant_ids) + 1
+
+            if trial.media_id not in normalized_media_ids:
+                normalized_media_ids[trial.media_id] = len(normalized_media_ids) + 1
+
+            trial._participant_id = normalized_participant_ids[trial.participant_id]
+            trial._media_id = normalized_media_ids[trial.media_id]
 
     @abc.abstractmethod
     def get_media_name_by_movie_id(self, movie_id):
