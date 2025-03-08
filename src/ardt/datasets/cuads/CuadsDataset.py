@@ -242,6 +242,8 @@ class CuadsDataset(AERDataset):
                 trial.signal_preprocessors = self.signal_preprocessors
                 self.trials.append(trial)
 
+    def _post_load_trials(self):
+        pass
 
     def get_media_name_by_movie_id(self, movie_id):
         return self.media_index_to_name[movie_id]

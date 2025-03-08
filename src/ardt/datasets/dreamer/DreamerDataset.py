@@ -145,6 +145,9 @@ class DreamerDataset(AERDataset):
                     trial.signal_data_files[signal] = self.get_working_path(trial.participant_id, trial.media_id, signal)
                 self.trials.append(trial)
 
+    def _post_load_trials(self):
+        pass
+
     def get_media_name_by_movie_id(self, movie_id):
         return None
 

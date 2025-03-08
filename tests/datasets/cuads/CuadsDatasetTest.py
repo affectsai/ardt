@@ -79,6 +79,29 @@ class CuadsDatasetTest(unittest.TestCase):
         self.assertEqual(len(trial_splits[0]) + len(trial_splits[1]), len(self.dataset.trials))
         self.assertEqual(0, len(split_1_participants.intersection(split_2_participants)))
 
+    def test_filtered_splits(self):
+        localds = CuadsDataset(None, 0, 0)
+        localds.preload()
+
+        num_media_ids = random.randint(2,5)
+        num_participant_ids = random.randint(5,10)
+
+        mediaids_to_filter_out = random.choices(np.arange(1,CUADS_NUM_MEDIA_FILES), k=num_media_ids)
+        participants_to_filter_out = random.choices(np.arange(1,CUADS_NUM_PARTICIPANTS), k=num_participant_ids)
+
+        participant_id_filter = AERTrialFilter(lambda x: x.participant_id not in participants_to_filter_out)
+        media_id_filter = AERTrialFilter(lambda x: x.media_id not in mediaids_to_filter_out)
+        localds.load_trials(trial_filters=[participant_id_filter, media_id_filter])
+
+        trial_splits = localds.get_trial_splits([.7, .3])
+        split_1_participants = set([x.participant_id for x in trial_splits[0]])
+        split_2_participants = set([x.participant_id for x in trial_splits[1]])
+
+        self.assertEqual(len(trial_splits), 2)
+        self.assertEqual(len(trial_splits[0]) + len(trial_splits[1]), len(localds.trials))
+        self.assertEqual(0, len(split_1_participants.intersection(split_2_participants)))
+
+
     def test_three_splits(self):
         trial_splits = self.dataset.get_trial_splits([.7, .15, .15])
         split_1_participants = set([x.participant_id for x in trial_splits[0]])

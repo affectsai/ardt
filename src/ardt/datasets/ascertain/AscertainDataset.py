@@ -287,6 +287,9 @@ class AscertainDataset(AERDataset):
 
                 self.trials.append(trial)
 
+    def _post_load_trials(self):
+        pass
+
     def get_media_name_by_movie_id(self, movie_id):
         return None
 

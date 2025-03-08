@@ -173,6 +173,10 @@ class AERDataset(metaclass=abc.ABCMeta):
         """
         pass
 
+    @abc.abstractmethod
+    def _post_load_trials(self):
+        pass
+
     def load_trials(self, trial_filters: Optional[List[AERTrialFilter]] = None):
         """
         This method calls self._load_trials to load all trials in this dataset. After all trials are loaded, the
@@ -207,17 +211,17 @@ class AERDataset(metaclass=abc.ABCMeta):
         # media ids from the dataset.
         #
         # Normalize the remaining participant_ids and media_ids so they are numbered sequentially starting from 1
-        normalized_participant_ids = {}
-        normalized_media_ids = {}
-        for trial in self.trials:
-            if trial.participant_id not in normalized_participant_ids:
-                normalized_participant_ids[trial.participant_id] = len(normalized_participant_ids) + 1
-
-            if trial.media_id not in normalized_media_ids:
-                normalized_media_ids[trial.media_id] = len(normalized_media_ids) + 1
-
-            trial._participant_id = normalized_participant_ids[trial.participant_id]
-            trial._media_id = normalized_media_ids[trial.media_id]
+        # normalized_participant_ids = {}
+        # normalized_media_ids = {}
+        # for trial in self.trials:
+        #     if trial.participant_id not in normalized_participant_ids:
+        #         normalized_participant_ids[trial.participant_id] = len(normalized_participant_ids) + 1
+        # 
+        #     if trial.media_id not in normalized_media_ids:
+        #         normalized_media_ids[trial.media_id] = len(normalized_media_ids) + 1
+        # 
+        #     trial._participant_id = normalized_participant_ids[trial.participant_id]
+        #     trial._media_id = normalized_media_ids[trial.media_id]
 
     @abc.abstractmethod
     def get_media_name_by_movie_id(self, movie_id):
@@ -553,7 +557,10 @@ class TrialWrapperDataset(AERDataset):
     def _preload_dataset(self):
         pass
 
-    def load_trials(self):
+    def _load_trials(self):
+        pass
+
+    def _post_load_trials(self):
         pass
 
     def get_media_name_by_movie_id(self, movie_id):
@@ -610,7 +617,10 @@ class BalancedWrapperDataset(AERDataset):
     def _preload_dataset(self):
         pass
 
-    def load_trials(self):
+    def _load_trials(self):
+        pass
+
+    def _post_load_trials(self):
         pass
 
     def get_media_name_by_movie_id(self, movie_id):
