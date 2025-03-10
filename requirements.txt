@@ -129,13 +129,13 @@ six==1.17.0
     #   python-dateutil
     #   tensorboard
     #   tensorflow
-tensorboard==2.18.0
+tensorboard==2.17.1
     # via
     #   ardt (pyproject.toml)
     #   tensorflow
 tensorboard-data-server==0.7.2
     # via tensorboard
-tensorflow==2.18.0
+tensorflow==2.17.1
     # via ardt (pyproject.toml)
 termcolor==2.5.0
     # via tensorflow
