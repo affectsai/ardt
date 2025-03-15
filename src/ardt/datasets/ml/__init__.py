@@ -14,3 +14,4 @@
 
 from .TFDatasetWrapper import TFDatasetWrapper
 from .TFRecordDatasetGenerator import TFRecordDatasetGenerator
+from .TorchDatasetWrapper import TorchDatasetWrapper

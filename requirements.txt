@@ -65,7 +65,7 @@ namex==0.0.8
     # via keras
 neurokit2==0.2.10
     # via ardt (pyproject.toml)
-numpy==2.0.2
+numpy~=2.1.2
     # via
     #   ardt (pyproject.toml)
     #   contourpy
@@ -117,7 +117,7 @@ scikit-learn==1.6.1
     # via
     #   ardt (pyproject.toml)
     #   neurokit2
-scipy==1.15.1
+scipy~=1.15.2
     # via
     #   ardt (pyproject.toml)
     #   neurokit2
@@ -129,13 +129,13 @@ six==1.17.0
     #   python-dateutil
     #   tensorboard
     #   tensorflow
-tensorboard==2.17.1
+tensorboard~=2.19.0
     # via
     #   ardt (pyproject.toml)
     #   tensorflow
 tensorboard-data-server==0.7.2
     # via tensorboard
-tensorflow==2.17.1
+tensorflow~=2.19.0
     # via ardt (pyproject.toml)
 termcolor==2.5.0
     # via tensorflow
@@ -158,3 +158,6 @@ wrapt==1.17.2
 
 # The following packages are considered to be unsafe in a requirements file:
 # setuptools
+
+torch~=2.6.0
+tqdm~=4.67.1
