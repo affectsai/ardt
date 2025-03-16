@@ -4,7 +4,8 @@ build-backend = "hatchling.build"
 
 [project]
 name = "ardt"
-version = "0.2.0"
+#version = "0.2.0"
+dynamic = ["version"]
 authors = [
   { name="Timothy C. Sweeney-Fanelli", email="tim@affects.ai" },
 ]
@@ -35,4 +36,7 @@ dependencies = [
 [project.urls]
 Homepage = "https://github.com/affectsai/ardt"
 Issues = "https://github.com/affectsai/ardt/issues"
+
+[tool.hatch.version]
+path = "src/ardt/__about__.py"
 
