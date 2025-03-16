@@ -15,7 +15,7 @@ import queue
 from tqdm import tqdm
 
 class TorchDatasetWrapper(Dataset):
-    def __init__(self, dataset: AERDataset, signal_type: str = 'ECG', signal_len=256*30, truth=TruthType.QUADRANT, cache_name="aer_cache.lmdb"):
+    def __init__(self, dataset: AERDataset, signal_type: str = 'ECG', signal_len=256*30, truth=TruthType.QUADRANT, cache_path="aer_cache.lmdb"):
         """
         Args:
             aer_trials (list): List of AERTrial objects.
@@ -26,7 +26,7 @@ class TorchDatasetWrapper(Dataset):
         self.signal_len = signal_len
         self.truth = truth
         self.all_samples = []
-        self.cache_path = os.path.join("lmdb",cache_name)
+        self.cache_path = cache_path
         self.num_cache_workers = 28
         self.cache = None
         self.trials_by_key = {}
@@ -80,8 +80,10 @@ class TorchDatasetWrapper(Dataset):
         """Generates an LMDB cache for Torch dataset loading."""
 
         if os.path.exists(self.cache_path):
-            print("✅ LMDB cache alreadye exists.")
+            print("✅ LMDB cache already exists.")
             return
+
+        os.makedirs(os.path.dirname(self.cache_path), exist_ok=True)
 
         if num_workers is None:
             num_workers = max(int(multiprocessing.cpu_count() * 0.75), 1)
