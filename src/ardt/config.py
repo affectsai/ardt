@@ -32,9 +32,11 @@ default_config = {
     },
 }
 
-user_config = None
-if os.path.exists('ardt_config.yaml'):
-    with open('ardt_config.yaml', 'r') as f:
-        user_config = yaml.safe_load(f)
+config_path = os.environ.get('ARDT_CONFIG_PATH', str(os.path.join(os.getcwd(), 'ardt_config.yaml')))
+if not os.path.exists(config_path):
+    raise ValueError(f"Config file {config_path} does not exist. Please create it or set ARDT_CONFIG_PATH")
+
+with open('ardt_config.yaml', 'r') as f:
+    user_config = yaml.safe_load(f)
 
 config = user_config if user_config is not None else default_config
