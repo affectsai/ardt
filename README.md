@@ -17,7 +17,7 @@ pip install ardt
 
 __Step 2: Configuration__
 
-Configure that paths to your AER datasets in the `ardt_config.yaml` file. In your project root, create a file named `ardt_config.yaml` like so:
+Configure the paths to your AER datasets in the `ardt_config.yaml` file. 
 ```yaml
 {
     # Some ARDT dataset implementation may need to preprocess the raw data. When this happens, it'll store
@@ -27,8 +27,8 @@ Configure that paths to your AER datasets in the `ardt_config.yaml` file. In you
     # Configure any datasets you want to use... key is defined by the AERDataset implementation itself.
     # We show templates for the three dataset implementations provided out of the box, but you can add more or remove 
     #  any of these as needed.
+    'working_dir': '/mnt/datasets/ardt_work_folder/',
     'datasets': {
-        # For ardt.dataets.ascertain.AscertainDataset:
         'ascertain': {
             # Path to the expanded ASCERTAIN dataset:
             'path': '/mnt/datasets/ascertain',
@@ -37,12 +37,10 @@ Configure that paths to your AER datasets in the `ardt_config.yaml` file. In you
             'raw_data_path': 'ASCERTAIN_Raw',
             'features_data_path': 'ASCERTAIN_Features'
         },
-        # For ardt.dataets.dreamer.DreamerDataset:
         'dreamer': {
             'path': '/mnt/datasets/dreamer',
             'dreamer_data_filename': "DREAMER_Data.json"
         },
-        # For ardt.dataset.cuads.CuadsDataset:
         'cuads': {
             'path': '/mnt/datasets/cuads',
         }
@@ -50,13 +48,25 @@ Configure that paths to your AER datasets in the `ardt_config.yaml` file. In you
 }
 ```
 
-__Step 3: Consume a Dataset__
+The configuration specifies the working path for ARDT to store dataset caches, and the location for each AER dataset 
+available through the ARDT API. ARDT looks for this file in the following location, in this order:
+
+1. The path specified by the `ARDT_CONFIG_PATH` environment variable
+2. `ardt_config.yaml` in the current working directory
+
+Be sure that your application has read access to each of the datasets' `path` locations, and read-write access to the `working_dir`.
+ASCERTAIN uses approximately 1.1G of disk space, CUADS approximately 1.8G, and DREAMER approximately 5G of disk space in 
+`working_dir`. Future datasets may increase the storage requirements. 
+
+__Step 3: Using a Dataset__
 
 In the simplest possible case, you just want to load a single dataset and iterate over its trials. Most likely you 
 also want to process one of the trial's recorded signals. The following example prints trial data and does something
-with that trial's ECG signal data...
+with that trial's ECG signal data.
+
 ```python
 from ardt.datasets.cuads import CuadsDataset
+from ardt.datasets import TruthType
 
 # Loads cuads from the datasets.cuads.path in ardt_config.yaml
 dataset = CuadsDataset()
@@ -65,11 +75,30 @@ dataset.load_trials()       # loads the dataset trial data...
 
 for trial in dataset.trials:
     print(f'Participant {trial.participant_id} viewed media file {trial.media_name} '
-          f'and evaluated it into quadrant {trial.participapant_response}. '
+          f'and evaluated it into quadrant {trial.load_ground_truth(TruthType.QUADRANT)}. '
           f'Expected response was {trial.expected_response}')
     
     process_ecg_signal(trial.load_signal_data('ECG'))    
 ```
+
+The pattern is the same for each supported dataset. Simply instantiate the dataset object, call the preload() method to 
+ensure its working cache is initialized and populated, and then load the trials. 
+
+Individual datasets have different data schemas and file formats. For example, ASCERTAIN is provided as a series of Matlab .mat
+files; CUADS as a set of CSV files, and DREAMER as a single, large, JSON formatted datafile. Parsing these data schemas can often 
+be time consuming, and memory and cpu intensive tasks. The dataset's `preload()` method is meant to mitigate this by parsing 
+the dataset into an easily usable intermediate format. The implementations provided parse the datasets into individual Numpy 
+files per trial, which can quickly retrieved in O(1) time at runtime.
+
+Additionally, datasets are often very large in size and loading the full dataset into memory may be problematic in some environments. 
+The `load_trials()` method only loads trial metadata, including participant and media IDs, truth values, etc. The underlying signal 
+data is not retrieved until it is needed when handling an individual trial. 
+
+The dataset trials are instances of AERTrial. An AERTrial represents a single participant viewing a single stimulus. The 
+"ground truth" represents how the participant rated their own emotional response and is encoded as the quadrant number within 
+the arousal/valence plane. The raw arousal and valence scores are not currently exposed, but may be added in a future update. 
+The ground truth is provided as a quadrant number by default, but may also be requested using `TruthType.AROUSAL` and 
+`TruthType.VALENCE` instead. 
 
 __Step 4: Learn About What Else You Can Do:__
 

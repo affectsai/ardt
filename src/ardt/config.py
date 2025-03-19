@@ -14,24 +14,6 @@
 import os.path
 import yaml
 
-default_config = {
-    'working_dir': '/mnt/affectsai/aerds/',
-    'datasets': {
-        'ascertain': {
-            'path': '/mnt/affectsai/datasets/ascertain',
-            'raw_data_path': 'ASCERTAIN_Raw',
-            'features_data_path': 'ASCERTAIN_Features'
-        },
-        'dreamer': {
-            'path': '/mnt/affectsai/datasets/dreamer',
-            'dreamer_data_filename': "DREAMER_Data.json"
-        },
-        'cuads': {
-            'path': '/mnt/affectsai/datasets/cuads',
-        }
-    },
-}
-
 config_path = os.environ.get('ARDT_CONFIG_PATH', str(os.path.join(os.getcwd(), 'ardt_config.yaml')))
 if not os.path.exists(config_path):
     raise ValueError(f"Config file {config_path} does not exist. Please create it or set ARDT_CONFIG_PATH")
