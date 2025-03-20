@@ -111,6 +111,7 @@ class AERDataset(metaclass=abc.ABCMeta):
         self._all_trials = []
         self._signal_metadata = signal_metadata
         self._expected_responses = expected_responses
+        self._is_preloaded = False
 
     def preload(self):
         """
@@ -132,6 +133,9 @@ class AERDataset(metaclass=abc.ABCMeta):
 
         :return:
         """
+        if self._is_preloaded:
+            return
+
         preload_file = self.get_working_dir() / Path('.preload.npy')
         if preload_file.exists():
             preloaded_signals = set(np.load(preload_file))
@@ -139,9 +143,11 @@ class AERDataset(metaclass=abc.ABCMeta):
             # If self.signals is a subset of the signals that have already been preloaded
             # then we don't have to preload anything.
             if set(self.signals).issubset(preloaded_signals):
+                self._is_preloaded = True
                 return
 
         self._preload_dataset()
+        self._is_preloaded = True
         np.save(preload_file, self.signals)
 
     @abc.abstractmethod
@@ -192,6 +198,8 @@ class AERDataset(metaclass=abc.ABCMeta):
         :param trial_filters:
         :return:
         """
+        self.preload()
+        self.trials.clear()
         self._load_trials()
 
         # If we have no filters, we're done.
