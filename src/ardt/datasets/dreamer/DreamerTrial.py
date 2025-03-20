@@ -13,7 +13,7 @@
 #  under the License.
 import numpy as np
 
-from ardt.datasets import AERTrial
+from ..AERTrial import AERTrial
 from pathlib import Path
 
 from ardt.datasets.AERTrial import TruthType

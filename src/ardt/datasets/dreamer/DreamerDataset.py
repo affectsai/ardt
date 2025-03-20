@@ -20,8 +20,7 @@ import ijson
 import numpy as np
 
 from ardt import config
-from ardt.datasets import AERDataset
-from ardt.datasets.cuads.CuadsDataset import default_signal_metadata
+from ..AERDataset import AERDataset
 
 from .DreamerTrial import DreamerTrial
 
@@ -126,9 +125,10 @@ class DreamerDataset(AERDataset):
 
                     for c in range(DREAMER_NUM_MEDIA_FILES):
                         media_id = c + 1
-                        media_path = self.get_working_path(participant_id, media_id)
+                        media_path = self.get_working_path(dataset_participant_id=participant_id, dataset_media_id=media_id)
                         media_path.mkdir(parents=True, exist_ok=True)
 
+                        print(str(media_path / Path(f'{signal}_stimuli.npy')))
                         np.save(media_path / Path(f'{signal}_stimuli.npy'), stimuli_signal_data[c])
                         np.save(media_path / Path(f'{signal}_baseline.npy'), baseline_signal_data[c])
 
