@@ -16,5 +16,10 @@
 from .AERDataset import AERDataset
 from .AERTrial import AERTrial, TruthType
 from .AERTrialFilter import AERTrialFilter
-from ardt.datasets.ml.TFDatasetWrapper import TFDatasetWrapper
 from .MultiDataset import MultiDataset
+
+from .ascertain import AscertainDataset, AscertainTrial
+from .cuads import CuadsDataset, CuadsTrial
+from .dreamer import DreamerDataset, DreamerTrial
+from .ml.TFDatasetWrapper import TFDatasetWrapper
+from .ml.TorchDatasetWrapper import TorchDatasetWrapper
