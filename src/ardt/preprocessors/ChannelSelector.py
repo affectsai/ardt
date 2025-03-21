@@ -21,18 +21,17 @@ class ChannelSelector(SignalPreprocessor):
     Use this to select specific channels from the signal. Useful for removing timestamp data, or narrowing down
     channels in use for high-channel data.
     """
+    def __init__(self, child_preprocessor=None, parent_preprocessor=None, channels_first=True, channels=None):
+        super().__init__(child_preprocessor=child_preprocessor, parent_preprocessor=parent_preprocessor)
+        self.channels = channels
+        self.channels_first = channels_first
 
-    def __init__(self, retain_channels=None, parent_preprocessor=None, child_preprocessor=None):
-        """
+    def process_signal(self, ecg_signal):
+        if self.channels is None:
+            self.channel = np.arange(1, signal.shape[0])
 
-        :param retain_channels: an iterable containing the channels to retain in the signal. If None, all channels except 0 are retained, removing timeseries data from the trial
-        :param parent_preprocessor
-        """
-        super().__init__(parent_preprocessor, child_preprocessor)
-        self._retain_channels = retain_channels
+        if self.channels_first:
+            return ecg_signal[self.channels, :]
+        else:
+            return ecg_signal[:, self.channels]
 
-    def process_signal(self, signal):
-        channels_to_keep = self._retain_channels
-        if channels_to_keep is None:
-            channels_to_keep = np.arange(1, signal.shape[0])
-        return signal[channels_to_keep, :]
