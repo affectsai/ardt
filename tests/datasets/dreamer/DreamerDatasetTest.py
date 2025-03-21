@@ -12,7 +12,6 @@
 #  express or implied. See the License for the specific language governing permissions and limitations
 #  under the License.
 
-import random
 import unittest
 
 from ardt.datasets.AERTrial import TruthType
@@ -28,7 +27,6 @@ class DreamerDatasetTest(unittest.TestCase):
     def setUp(self):
         self.dataset = DreamerDataset(DEFAULT_DREAMER_PATH, signals=['ECG'], participant_offset=PARTICIPANT_OFFSET,
                                           mediafile_offset=MEDIAFILE_OFFSET)
-        self.dataset.preload()
         self.dataset.load_trials()
         self.dataset_path = (DEFAULT_DREAMER_PATH / DEFAULT_DREAMER_FILENAME).resolve()
 
