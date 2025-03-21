@@ -9,4 +9,3 @@ API Reference
     ardt.datasets
     ardt.preprocessors
     ardt.config
-    ardt.ardt_utils
