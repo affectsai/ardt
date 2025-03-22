@@ -1,4 +1,4 @@
-ardt.datasets.ascertain.AscertainTrial
+﻿ardt.datasets.ascertain.AscertainTrial
 ======================================
 
 .. currentmodule:: ardt.datasets.ascertain

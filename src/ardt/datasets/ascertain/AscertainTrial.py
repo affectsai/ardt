@@ -32,11 +32,15 @@ class AscertainTrial(AERTrial):
 
     def load_ground_truth(self, truth=TruthType.QUADRANT):
         quad = self._truth
-        response = quad
+        assert(quad in [1,2,3,4])
+
+        response = quad-1
         if truth == TruthType.AROUSAL:
             response = AERTrial.quadrant_to_arousal(quad)
+            assert (response in [0,1])
         elif truth == TruthType.VALENCE:
             response = AERTrial.quadrant_to_valence(quad)
+            assert (response in [0,1])
 
         return response
 

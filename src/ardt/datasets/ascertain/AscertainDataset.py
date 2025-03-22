@@ -100,7 +100,7 @@ default_signal_metadata = {'ECG': {
 }
 
 class AscertainDataset(AERDataset):
-    def __init__(self, ascertain_path=None, signals=None, participant_offset=0, mediafile_offset=0):
+    def __init__(self, ascertain_path=None, signals=None):
         """
         Construct a new AscertainDataset object for a given ascertainPath.
 
@@ -114,8 +114,6 @@ class AscertainDataset(AERDataset):
         mediafile_offset is 12, then Movie 1 from this dataset's raw data will be reported as Media ID 13.
         """
         super().__init__(signals=signals,
-                         participant_offset=participant_offset,
-                         mediafile_offset=mediafile_offset,
                          signal_metadata=default_signal_metadata,
                          expected_responses=expected_classifications)
 
@@ -263,6 +261,9 @@ class AscertainDataset(AERDataset):
             ascertain_datafiles[participant_id][movie_id][signal_type] = matlab_file.resolve()
 
         def _to_quadrant(a,v):
+            assert(0<=a<=6)
+            assert(-3<=v<=3)
+
             q=-1
             if a >= 3:  # A is high
                 if v >= 0:  # A is High, V is Neg = Quad 0

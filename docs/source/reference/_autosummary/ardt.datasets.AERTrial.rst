@@ -1,4 +1,4 @@
-ardt.datasets.AERTrial
+﻿ardt.datasets.AERTrial
 ======================
 
 .. currentmodule:: ardt.datasets

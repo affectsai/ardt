@@ -32,61 +32,45 @@ import warnings
 
 class AERDataset(metaclass=abc.ABCMeta):
     """
-    AERDataset is the base class for all dataset implementations in AARDT. All AERDatasets expose the following
-    properties:
-    - trials: a list of all AERTrials associated with this dataset
-    - signals: a list of signals loaded in this dataset instance (a proper subset of the available signals within this
-    dataset)
-    - participant_ids: a list of participant identifiers in the dataset. Participant IDs are offset by the value of
-     participant_offset
-    - media_ids: a list of identifiers for the media file used as emotional stimulus in the dataset. Media IDs are
-    offset by the value of media_file_offset
-    - participant_offset: a constant value that is added to all participants identifiers in the dataset. This is useful
-    when you will be using trials from several different AERDatasets.
-    - media_file_offset: a constant value that is added to all media file identifiers in the dataset. This is useful
-    when you will be using trials from several different AERDatasets
-    - signal_preprocessors: a mapping of signal_type to SignalPreprocessor chain, used to automate signal preprocessing
-    when signals are loaded from the AERTrial instances under this dataset.
-
-    AERDataset also encapsulates business logic that is reusable by its subclasses, including:
-    - preload signal checking: calls to `preload` are first checked to see if all signals have already been preloaded by
-     a previous invocation. If a preload is necessary, then the subclass' _preload_dataset method will be called,
-     otherwise no action is taken.
-    - get_trial_splits: used to generate training, validation and test splits based on participant identifiers.
-
-    The general usage pattern looks something like this:
-    >>> from ardt.datasets.ascertain import AscertainDataset
-    >>> my_dataset = AscertainDataset(signals=['ECG'])
-    >>> my_dataset.signal_preprocessors['ECG'] = aardt.preprocessors.NK2ECGPreprocessor()
-    >>> my_dataset.preload()
-    >>> my_dataset.load_trials()
-    >>>
-    >>> training_trials, validation_trials, test_trials =
-    >>>   my_dataset.get_trial_splits([.5, .3, .2])
-    >>>
-    >>> for training_trial in training_trials:
-    >>>     preprocessed_ecg = training_trial.load_signal_data('ECG')
-    >>>     # do something with the preprocessed ecg signal.
+    AERDataset is the base class for all dataset implementations in ARDT. An AERDataset is fundamentally a collection of
+    AERTrials, which are the basic unit of data in ARDT.
     """
-    def __init__(self, signals=None, participant_offset=0, mediafile_offset=None, media_offset=None, signal_metadata=None, expected_responses=None):
+    def __init__(self, signals=None, signal_metadata=None, expected_responses=None):
         """
-        Represents a class that manages multiple signals and related data, such
-        as participant and media file offsets. This class is initialized
-        with optional signal data and offsets and provides internal storage
-        for signal processors, participant identifiers, media identifiers,
-        and trial information.
+        AERDataset is the base class for all dataset implementations in ARDT. An AERDataset is
+        fundamentally a collection of AERTrials, which are the basic unit of data in ARDT.
 
-        :param signals: A list of signal types used within the instance, e.g.: ['ECG', 'EEG'].
-        :param participant_offset: Offset applied to identifiers for participants.
-        :param mediafile_offset: Offset applied to identifiers for media files.
+        Attributes
+        ----------
+        _signals : list
+            A list of signals associated with the class.
+        _signal_metadata : dict
+            A dictionary containing metadata for the signals.
+        _expected_responses : any
+            Expected responses related to the signals.
+        _is_preloaded : bool
+            A flag indicating whether the signals are preloaded.
+        _signal_preprocessors : dict
+            A dictionary storing preprocessors for the signals.
+        _participant_offset : int
+            An offset value associated with participants.
+        _media_offset : int
+            An offset value related to media.
+        _participant_ids : set
+            A set of unique participant IDs.
+        _media_ids : set
+            A set of unique media IDs.
+        _all_trials : list
+            A list containing all trial data.
 
-        :ivar _signals: Internal storage for the list of signals.
-        :ivar _signal_preprocessors: Dictionary for mapping signal processors.
-        :ivar _participant_offset: Offset for participant identifiers.
-        :ivar _media_offset: Offset for media file identifiers.
-        :ivar _participant_ids: Set that tracks unique participant IDs.
-        :ivar _media_ids: Set that tracks unique media file IDs.
-        :ivar _all_trials: List that contains information about all trials.
+        Parameters
+        ----------
+        signals : list, optional
+            Initial list of signals to set (default is an empty list).
+        signal_metadata : dict, optional
+            Initial dictionary for signal metadata (default is an empty dictionary).
+        expected_responses : any, optional
+            Initial expected responses (default is None).
         """
         if signals is None:
             signals = []
@@ -95,23 +79,18 @@ class AERDataset(metaclass=abc.ABCMeta):
         if expected_responses is None:
             expected_responses = {}
 
-        if media_offset is None and mediafile_offset is not None:
-            media_offset = mediafile_offset
-            warnings.warn("AERDataset initialization parameter mediafile_offset is deprecated, use media_offset instead. mediafile_offset may be removed in a future release.")
-
-        if media_offset is None:
-            media_offset = 0
-
         self._signals = signals
+        self._signal_metadata = signal_metadata
+        self._expected_responses = expected_responses
+
+        self._is_preloaded = False
         self._signal_preprocessors = {}
-        self._participant_offset = participant_offset
-        self._media_offset = media_offset
+        self._derived_signals = {}
+        self._participant_offset = 0
+        self._media_offset = 0
         self._participant_ids = set()
         self._media_ids = set()
         self._all_trials = []
-        self._signal_metadata = signal_metadata
-        self._expected_responses = expected_responses
-        self._is_preloaded = False
 
     def preload(self):
         """
@@ -493,6 +472,13 @@ class AERDataset(metaclass=abc.ABCMeta):
         else:
             self._signal_metadata[signal_type].update(metadata)
 
+    def add_derived_signal(self, signal_type, signal_fn):
+        self._derived_signals[signal_type] = signal_fn
+
+    @property
+    def derived_signals(self):
+        return self._derived_signals
+
     def get_balanced_dataset(self, oversample=True, use_expected_response=False):
         '''
         Returns a balanced wrapper around this dataset that ensures the number of trials represented in each quadrant
@@ -551,10 +537,10 @@ class TrialWrapperDataset(AERDataset):
     This is a wrapper class used to create a meta-dataset around a set of trials for a split...
     """
     def __init__(self, trials, participant_offset=0, mediafile_offset=0, signal_metadata=None, expected_responses=None):
-        super().__init__(participant_offset=participant_offset,
-                       mediafile_offset=mediafile_offset,
-                       signal_metadata=signal_metadata,
-                       expected_responses=expected_responses)
+        super().__init__(signal_metadata=signal_metadata,
+                         expected_responses=expected_responses)
+        self.participant_offset = participant_offset
+        self.mediafile_offset = mediafile_offset
 
         self._all_trials = trials
         self._media_names_by_id = {}
@@ -580,10 +566,10 @@ class BalancedWrapperDataset(AERDataset):
     undersamples trials from different quadrants to create a dataset that has an equal number of trials per quadrant.
     """
     def __init__(self, dataset, participant_offset=0, mediafile_offset=0, signal_metadata=None, expected_responses=None, oversample = True, use_expected_response=False):
-        super().__init__(participant_offset=participant_offset,
-                         mediafile_offset=mediafile_offset,
-                         signal_metadata=signal_metadata,
+        super().__init__(signal_metadata=signal_metadata,
                          expected_responses=expected_responses )
+        self.participant_offset = participant_offset
+        self.mediafile_offset = mediafile_offset
 
         trial_by_quad = {
             1: [],
@@ -600,9 +586,9 @@ class BalancedWrapperDataset(AERDataset):
 
         for trial in dataset.trials:
             q = trial.expected_response if use_expected_response else trial.load_ground_truth()
-            if q == 0 or q > 4:
-                continue
+            assert(0<=q<=3)
 
+            q = q + 1
             counts[q] += 1
             trial_by_quad[q].append(trial)
 

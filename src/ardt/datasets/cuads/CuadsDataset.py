@@ -89,7 +89,7 @@ CUADS_COLUMN_MAP = {
     "SEGMENT_PPG_HR":       47,
 }
 class CuadsDataset(AERDataset):
-    def __init__(self, dataset_path=None, participant_offset=0, mediafile_offset=0):
+    def __init__(self, dataset_path=None):
         """
         Construct a new CuadsDataset object..
 
@@ -104,8 +104,6 @@ class CuadsDataset(AERDataset):
         """
         signals = ['ECG', 'PPG', 'GSR', 'ECGHR', 'PPGHR']
         super().__init__(signals=signals,
-                         participant_offset=participant_offset,
-                         mediafile_offset=mediafile_offset,
                          signal_metadata=default_signal_metadata,
                          expected_responses=expected_classifications)
 
@@ -187,6 +185,9 @@ class CuadsDataset(AERDataset):
         response_arousal = 2
 
         def _to_quadrant(a, v):
+            assert(0<=a<=10)
+            assert(0<=v<=10)
+
             q = -1
             if a >= 5:
                 if v >= 5:

@@ -27,6 +27,9 @@ class DreamerTrial(AERTrial):
         super().__init__(dataset, participant_id, movie_id)
 
     def _to_quadrant(self,a,v):
+        assert (1<=a<=5)
+        assert (1<=v<=5)
+
         q=-1
         if a >= 3:  # A is high
             if v >= 3:  # A is High, V is Neg = Quad 0
@@ -63,12 +66,15 @@ class DreamerTrial(AERTrial):
         ar=np.load(participant_path / Path('arousal.npy'))
         va=np.load(participant_path / Path('valence.npy'))
         quad = self._to_quadrant(ar[self.media_id - self.dataset.media_file_offset - 1], va[self.media_id - self.dataset.media_file_offset - 1])
+        assert (quad in [1,2,3,4])
 
-        response = quad
+        response = quad - 1
         if truth == TruthType.AROUSAL:
             response = AERTrial.quadrant_to_arousal(quad)
+            assert (response in [0,1])
         elif truth == TruthType.VALENCE:
             response = AERTrial.quadrant_to_valence(quad)
+            assert (response in [0,1])
 
         return response
 

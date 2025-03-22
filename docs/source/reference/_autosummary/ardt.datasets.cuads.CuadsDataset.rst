@@ -1,4 +1,4 @@
-ardt.datasets.cuads.CuadsDataset
+﻿ardt.datasets.cuads.CuadsDataset
 ================================
 
 .. currentmodule:: ardt.datasets.cuads

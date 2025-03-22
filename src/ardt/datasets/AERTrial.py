@@ -47,14 +47,15 @@ class AERTrial(abc.ABC):
         self._signal_preprocessors = {}
         self._signal_data_files = {}
         self._media_id = movie_id
+        self._derived_signals = {}
 
     @staticmethod
     def quadrant_to_arousal(q):
-        return 2 if q == 1 or q == 2 else 1
+        return 1 if q == 1 or q == 2 else 0
 
     @staticmethod
     def quadrant_to_valence(q):
-        return 2 if q == 1 or q == 4 else 1
+        return 1 if q == 1 or q == 4 else 0
 
     def load_preprocessed_signal_data(self,signal_type: str):
         '''
@@ -65,6 +66,9 @@ class AERTrial(abc.ABC):
         return self.load_signal_data(signal_type)
 
     def load_signal_data(self, signal_type: str):
+        if signal_type in self.dataset.derived_signals.keys():
+            return self.dataset.derived_signals[signal_type](self)
+
         signal_data = self.load_raw_signal_data(signal_type)
         if signal_type in self.signal_preprocessors.keys():
             signal_data = self.signal_preprocessors[signal_type](signal_data)

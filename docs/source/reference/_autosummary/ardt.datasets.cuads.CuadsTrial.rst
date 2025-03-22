@@ -1,4 +1,4 @@
-ardt.datasets.cuads.CuadsTrial
+﻿ardt.datasets.cuads.CuadsTrial
 ==============================
 
 .. currentmodule:: ardt.datasets.cuads

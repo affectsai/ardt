@@ -1,4 +1,4 @@
-ardt.datasets.AERDataset
+﻿ardt.datasets.AERDataset
 ========================
 
 .. currentmodule:: ardt.datasets
