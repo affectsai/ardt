@@ -58,7 +58,7 @@ class DreamerTrial(AERTrial):
             dataset_meta['duration'] = self._ecg_signal_duration
         return dataset_meta
 
-    def load_ground_truth(self, truth=TruthType.QUADRANT):
+    def _load_userresponse_truth(self, truth=TruthType.QUADRANT):
         participant_path = self.dataset.get_working_path(self.participant_id)
         if participant_path is None:
             return 0

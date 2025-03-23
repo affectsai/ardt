@@ -30,7 +30,7 @@ class AscertainTrial(AERTrial):
         self._ecg_signal_duration = None
         self._truth = quadrant
 
-    def load_ground_truth(self, truth=TruthType.QUADRANT):
+    def _load_userresponse_truth(self, truth=TruthType.QUADRANT):
         quad = self._truth
         assert(quad in [1,2,3,4])
 

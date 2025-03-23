@@ -23,7 +23,8 @@ class TruthType(Enum):
     QUADRANT = auto()
     AROUSAL = auto()
     VALENCE = auto()
-    NEUTRAL = auto()
+    MEDIA_ID = auto()
+    PARTICIPANT_ID = auto()
 
 class AERTrial(abc.ABC):
     def __init__(self, dataset: AERDataset, participant_id: int, movie_id: int):
@@ -93,8 +94,26 @@ class AERTrial(abc.ABC):
 
         return np.empty(0)
 
-    @abc.abstractmethod
     def load_ground_truth(self, truth=TruthType.QUADRANT):
+        """
+        Returns the ground truth label for this trial. For AER trials, this is the quadrant within the A/V space,
+        numbered 0 through 3 as follows:
+        - 0: High Arousal, High Valence
+        - 1: High Arousal, Low Valence
+        - 2: Low Arousal, Low Valence
+        - 3: Low Arousal, High Valence
+
+        :return: The ground truth label for this trial
+        """
+        if truth == TruthType.MEDIA_ID:
+            return self.media_id
+        elif truth == TruthType.PARTICIPANT_ID:
+            return self.participant_id
+        else:
+            return self._load_userresponse_truth(truth)
+
+    @abc.abstractmethod
+    def _load_userresponse_truth(self, truth=TruthType.QUADRANT):
         """
         Returns the ground truth label for this trial. For AER trials, this is the quadrant within the A/V space,
         numbered 0 through 3 as follows:

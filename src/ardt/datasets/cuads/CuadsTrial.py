@@ -32,7 +32,7 @@ class CuadsTrial(AERTrial):
         self._shared_cache = shared_cache
         self.signal_types=['ECG','ECGHR','GSR','PPG','PPGHR']
 
-    def load_ground_truth(self, truth=TruthType.QUADRANT):
+    def _load_userresponse_truth(self, truth=TruthType.QUADRANT):
         quad = self._truth
         assert(quad in [1,2,3,4])
 
