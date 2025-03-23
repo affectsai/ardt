@@ -55,6 +55,7 @@ expected_classifications = {
             17: 3,  # The Shawshank Redemption
             18: 2,  # The Departed
         }
+expected_classifications = { key: val-1 for key, val in expected_classifications.items() }
 
 default_signal_metadata = {
     'ECG': {

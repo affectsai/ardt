@@ -23,6 +23,9 @@ class TruthType(Enum):
     QUADRANT = auto()
     AROUSAL = auto()
     VALENCE = auto()
+    EXPECTED_QUADRANT = auto()
+    EXPECTED_AROUSAL = auto()
+    EXPECTED_VALENCE = auto()
     MEDIA_ID = auto()
     PARTICIPANT_ID = auto()
 
@@ -109,6 +112,12 @@ class AERTrial(abc.ABC):
             return self.media_id
         elif truth == TruthType.PARTICIPANT_ID:
             return self.participant_id
+        elif truth == TruthType.EXPECTED_QUADRANT:
+            return self.expected_response
+        elif truth == TruthType.EXPECTED_AROUSAL:
+            return 1 if self.expected_response in [0,1] else 0
+        elif truth == TruthType.EXPECTED_VALENCE:
+            return 1 if self.expected_response in [0,3] else 0
         else:
             return self._load_userresponse_truth(truth)
 

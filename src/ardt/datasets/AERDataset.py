@@ -214,10 +214,10 @@ class AERDataset(metaclass=abc.ABCMeta):
     def get_media_name_by_movie_id(self, movie_id):
         pass
 
-    @property
-    @abc.abstractmethod
-    def expected_media_responses(self):
-        pass
+    # @property
+    # @abc.abstractmethod
+    # def expected_media_responses(self):
+    #     pass
 
     def get_working_dir(self):
         """

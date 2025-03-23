@@ -57,6 +57,7 @@ expected_classifications = {
             'video_90': 1,
             'video_107': 2
         }
+expected_classifications = { key: val-1 for key, val in expected_classifications.items() }
 
 default_signal_metadata = {
             'ECG': {

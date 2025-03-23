@@ -92,6 +92,7 @@ expected_classifications = {
             29: 2,  # Mulholland Drive
             32: 2,  # Alien
         }
+expected_classifications = { key: val-1 for key, val in expected_classifications.items() }
 
 default_signal_metadata = {'ECG': {
                 'sample_rate': 256,
