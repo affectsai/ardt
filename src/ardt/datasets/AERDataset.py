@@ -474,6 +474,8 @@ class AERDataset(metaclass=abc.ABCMeta):
 
     def add_derived_signal(self, signal_type, signal_fn):
         self._derived_signals[signal_type] = signal_fn
+        for trial in self._all_trials:
+            trial.add_derived_signal(signal_type, signal_fn)
 
     @property
     def derived_signals(self):

@@ -70,8 +70,8 @@ class AERTrial(abc.ABC):
         return self.load_signal_data(signal_type)
 
     def load_signal_data(self, signal_type: str):
-        if signal_type in self.dataset.derived_signals.keys():
-            return self.dataset.derived_signals[signal_type](self)
+        if signal_type in self._derived_signals.keys():
+            return self._derived_signals[signal_type](self)
 
         signal_data = self.load_raw_signal_data(signal_type)
         if signal_type in self.signal_preprocessors.keys():
@@ -175,6 +175,9 @@ class AERTrial(abc.ABC):
     @signal_types.setter
     def signal_types(self, signal_types):
         self._signal_types = signal_types
+
+    def add_derived_signal(self, signal_type, signal_fn):
+        self._derived_signals[signal_type] = signal_fn
 
     @property
     def signal_preprocessors(self):
