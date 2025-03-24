@@ -15,9 +15,10 @@ import abc
 
 
 class AERTrialFilter:
-    def __init__(self, trial_filter_function):
+    def __init__(self, trial_filter_function, **fn_kwargs):
         self.trial_filter_function = trial_filter_function
+        self.fn_kwargs = fn_kwargs
 
     @abc.abstractmethod
     def filter(self, trial) -> bool:
-        return self.trial_filter_function(trial)
+        return self.trial_filter_function(trial, **self.fn_kwargs)
