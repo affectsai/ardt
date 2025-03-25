@@ -1,3 +1,5 @@
+import traceback
+
 import torch
 
 from ardt.datasets.AERTrial import TruthType
@@ -10,6 +12,7 @@ import numpy as np
 import multiprocessing
 import threading
 import torch
+import traceback
 import os
 import queue
 from tqdm import tqdm
@@ -111,6 +114,7 @@ class TorchDatasetWrapper(Dataset):
                              [(trial_batch, record_queue) for trial_batch in trial_batches])
         except Exception as e:
             print(f"Exception occurred while processing trials: {e.__class__.__name__}: {e}")
+            traceback.print_exc()
         finally:
             writer_thread_stop_event.set()
             writer_thread.join()  # Ensure the writer finishes before exiting

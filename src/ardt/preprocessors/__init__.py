@@ -16,3 +16,5 @@ from .SignalPreprocessor import SignalPreprocessor
 from .ChannelSelector import ChannelSelector
 from .FixedDuration import FixedDurationPreprocessor
 from .MultiChannelZScoreNorm import MultiChannelECGZScoreNormalization
+from .neurokit import NK2ECGCleaner
+from .medfilt import MedianFilterWith35HzLowPass

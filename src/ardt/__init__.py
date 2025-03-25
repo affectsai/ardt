@@ -16,3 +16,4 @@ from .config import config
 from .ardt_utils import ardt_deprecated
 import ardt.datasets as datasets
 import ardt.preprocessors as preprocessors
+import ardt.derived as derived
