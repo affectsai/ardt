@@ -40,9 +40,10 @@ class MultiDataset(AERDataset):
         for dataset in self._datasets:
             dataset.preload()
 
-    def load_trials(self, trial_filters: Optional[List[AERTrialFilter]] = None):
-        for dataset in self._datasets:
-            dataset.load_trials(trial_filters)    # Load the sub-datasets with the filters applied.
+    def load_trials(self, trial_filters: Optional[List[AERTrialFilter]] = None, subsets_already_loaded=False):
+        if not subsets_already_loaded:
+            for dataset in self._datasets:
+                dataset.load_trials(trial_filters)    # Load the sub-datasets with the filters applied.
 
         super().load_trials()                     # Now call super.load_trials without filters because we don't need to
                                                   # filter them again.
