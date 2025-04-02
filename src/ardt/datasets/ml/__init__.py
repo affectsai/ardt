@@ -14,4 +14,4 @@
 
 from .TFDatasetWrapper import TFDatasetWrapper
 from .TFRecordDatasetGenerator import TFRecordDatasetGenerator
-from .TorchDatasetWrapper import TorchDatasetWrapper
+from .TorchDatasetWrapper import TorchDatasetWrapper, DistributedWeightedRandomSampler

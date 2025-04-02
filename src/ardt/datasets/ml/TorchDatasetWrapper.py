@@ -8,6 +8,7 @@ from torch.utils.data import Dataset
 from ardt.datasets import AERDataset
 
 import lmdb
+import math
 import numpy as np
 import multiprocessing
 import threading
@@ -16,6 +17,55 @@ import traceback
 import os
 import queue
 from tqdm import tqdm
+
+
+class DistributedWeightedRandomSampler(torch.utils.data.Sampler):
+    def __init__(self, aerds, truth=TruthType.QUADRANT, signal_type='ECG', world_size=None, rank=None, replacement=True):
+        if world_size is None:
+            if not dist.is_available():
+                world_size = 1
+            world_size = dist.get_world_size()
+        if rank is None:
+            if not dist.is_available():
+                rank = 0
+            rank = dist.get_rank()
+
+        self.num_replicas = world_size
+        self.rank = rank
+        self.replacement = replacement
+
+        class_counts={}
+        sample_labels=[]
+        # Create an index mapping of (trial_index, channel_index)
+        for trial_idx, trial in enumerate(aerds.trials):
+            label = trial.load_ground_truth(truth)
+
+            num_channels = trial.get_signal_metadata(signal_type)['n_channels']  # Number of channels
+            sample_labels.extend([label]*num_channels)
+
+            # Count how many samples in each class
+            if label not in class_counts:
+                class_counts[label] = 0
+            class_counts[label] += 1
+
+        class_counts = np.array([class_counts[i] for i in sorted(class_counts.keys())])
+        class_weights = 1. / class_counts
+
+        self.num_samples = math.ceil(len(sample_labels) / world_size)
+        self.total_size = self.num_samples * world_size
+        self.weights = torch.as_tensor(np.array([ class_weights[l] for l in sample_labels]))
+        self.indices = None
+
+    def __iter__(self):
+        generator = torch.Generator()
+        generator.manual_seed(self.rank)
+        indices_global = torch.multinomial(self.weights, self.total_size, generator=generator, replacement=self.replacement)
+        self.indices = indices_global[0:self.total_size:self.num_replicas]
+        return iter(self.indices)
+
+    def __len__(self):
+        return self.num_samples
+
 
 class TorchDatasetWrapper(Dataset):
     def __init__(self, dataset: AERDataset, signal_type: str = 'ECG', signal_len=256*30, truth=TruthType.QUADRANT, cache_path="aer_cache.lmdb"):
