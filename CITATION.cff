@@ -13,6 +13,10 @@ authors:
     email: tim@affects.ai
     affiliation: 'Affects AI, LLC'
     orcid: 'https://orcid.org/0009-0007-8206-1542'
+  - name: 'Affects AI, LLC'
+    city: Concord
+    country: US
+    post-code: '03301'
 identifiers:
   - type: doi
     value: 10.5281/zenodo.15148009
