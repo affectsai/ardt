@@ -19,7 +19,7 @@ from .SignalPreprocessor import SignalPreprocessor
 
 class FixedDurationPreprocessor(SignalPreprocessor):
     def __init__(self, signal_duration=45, sample_rate=256, padding_value=None,
-                 parent_preprocessor=None, child_preprocessor=None):
+                 parent_preprocessor=None, child_preprocessor=None, verbose=False):
         """
         Preprocesses the signal to a fixed duration. If signal is less than signal_duration, it will be padded on the
         left with the padding_value.
@@ -35,6 +35,7 @@ class FixedDurationPreprocessor(SignalPreprocessor):
         self.signal_duration = signal_duration
         self.sample_rate = sample_rate
         self.default_padding_value = padding_value
+        self._verbose = verbose
 
     def process_signal(self, signal):
         """
@@ -48,13 +49,19 @@ class FixedDurationPreprocessor(SignalPreprocessor):
         num_samples = signal.shape[1]
         target_samples = self.signal_duration * self.sample_rate
 
+        result = None
         if num_samples >= target_samples:
-            return signal[:, np.arange(num_samples - target_samples, num_samples)]
+            result = signal[:, np.arange(num_samples - target_samples, num_samples)]
         else:
             padding_value = self.default_padding_value
             if padding_value is None:
                 padding_value = np.mean(signal, axis=1)
             elif np.isscalar(padding_value):
                 padding_value = np.ones(num_channels) * padding_value
-            return np.concatenate([np.ones((num_channels, target_samples - num_samples)) *
+            result = np.concatenate([np.ones((num_channels, target_samples - num_samples)) *
                                    padding_value.reshape(-1, 1), signal], axis=1)
+
+        if self._verbose:
+            print(result.shape)
+
+        return result

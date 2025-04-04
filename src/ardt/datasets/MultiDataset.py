@@ -75,4 +75,9 @@ class MultiDataset(AERDataset):
     def get_media_name_by_movie_id(self, movie_id):
         pass
 
+    def get_dataset_by_type(self, type):
 
+        for dataset in self._datasets:
+            if isinstance(dataset, type):
+                return dataset
+        return None

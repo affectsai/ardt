@@ -17,4 +17,7 @@ from .ChannelSelector import ChannelSelector
 from .FixedDuration import FixedDurationPreprocessor
 from .MultiChannelZScoreNorm import MultiChannelECGZScoreNormalization
 from .neurokit import NK2ECGCleaner
-from .medfilt import MedianFilterWith35HzLowPass
+from .medfilt import MedianFilterWith35HzLowPass, MedianFilter
+from .notch_filter import NotchFilter
+from .resample import Resample
+from .lowpass import LowPass
