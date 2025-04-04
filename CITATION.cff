@@ -13,6 +13,9 @@ authors:
     email: tim@affects.ai
     affiliation: 'Affects AI, LLC'
     orcid: 'https://orcid.org/0009-0007-8206-1542'
+identifiers:
+  - type: doi
+    value: 10.5281/zenodo.15148009
 repository-code: 'https://github.com/affectsai/ardt/tree/v0.5.1'
 abstract: >-
   AARDT, pronouced "art," is a utility library for working
