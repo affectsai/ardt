@@ -15,4 +15,4 @@
 # SPDX-FileCopyrightText: 2025-present Tim Sweeney-Fanelli <tim@zerobytellc.com>
 #
 # SPDX-License-Identifier: MIT
-__version__ = "0.6.0"
+__version__ = "0.6.1"
