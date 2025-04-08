@@ -19,7 +19,7 @@ authors:
     post-code: '03301'
 identifiers:
   - type: doi
-    value: 10.5281/zenodo.15148009
+    value: 10.5281/zenodo.15178396
 repository-code: 'https://github.com/affectsai/ardt/tree/v0.5.1'
 abstract: >-
   AARDT, pronouced "art," is a utility library for working
