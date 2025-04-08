@@ -1,12 +1,12 @@
 ..
   class.rst
 
-ardt.datasets.MultiDataset
+ardt.preprocessors.LowPass
 ==========================
 
-.. currentmodule:: ardt.datasets
+.. currentmodule:: ardt.preprocessors
 
-.. autoclass:: MultiDataset
+.. autoclass:: LowPass
     :members:
     :show-inheritance:
     :inherited-members:

@@ -6,6 +6,10 @@
 # -- Project information -----------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
 
+import os
+import sys
+sys.path.insert(0, os.path.abspath('../'))
+print(sys.executable)
 project = 'Affective Research Dataset Toolkit'
 copyright = '2025, Affects AI, LLC'
 author = 'Affects AI, LLC'
@@ -17,12 +21,11 @@ release = '0.3.1'
 extensions = [
     # "sphinx.ext.napoleon",
     "sphinx.ext.autodoc",
-    "sphinx.ext.autosummary"
+    "sphinx.ext.autosummary",
+    "myst_parser"
 ]
 templates_path = ['_templates']
 exclude_patterns = []
-
-
 
 # -- Options for HTML output -------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#options-for-html-output

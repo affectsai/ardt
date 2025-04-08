@@ -19,7 +19,24 @@ from ardt.preprocessors import SignalPreprocessor
 
 class NotchFilter(SignalPreprocessor):
     """
-    Applies the Neurokit2 signal_filter method to the signal
+    Applies a notch filter to the signal at a specified frequency using scipy.signal.iirnotch.
+
+    Parameters
+    ----------
+    fs : int
+        The sampling frequency of the signal.
+
+    freq : float
+        The frequency to remove from the signal.
+
+    quality : float
+        The quality factor of the notch filter.
+
+    parent_preprocessor : SignalPreprocessor
+        The parent preprocessor of this preprocessor.
+
+    child_preprocessor : SignalPreprocessor
+        The child preprocessor of this preprocessor.
     """
 
     def __init__(self, fs, freq=60.0, quality=30.0, parent_preprocessor=None, child_preprocessor=None):

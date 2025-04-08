@@ -1,12 +1,12 @@
 ..
   class.rst
 
-ardt.preprocessors.ChannelSelector
-==================================
+ardt.preprocessors.MedianFilter
+===============================
 
 .. currentmodule:: ardt.preprocessors
 
-.. autoclass:: ChannelSelector
+.. autoclass:: MedianFilter
     :members:
     :show-inheritance:
     :inherited-members:

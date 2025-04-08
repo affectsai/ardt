@@ -20,6 +20,14 @@ class ChannelSelector(SignalPreprocessor):
     """
     Use this to select specific channels from the signal. Useful for removing timestamp data, or narrowing down
     channels in use for high-channel data.
+
+    Parameters
+    ----------
+    parent_preprocessor : SignalPreprocessor
+        The parent preprocessor of this preprocessor.
+
+    child_preprocessor : SignalPreprocessor
+        The child preprocessor of this preprocessor.
     """
     def __init__(self, child_preprocessor=None, parent_preprocessor=None, channels_first=True, channels=None):
         super().__init__(child_preprocessor=child_preprocessor, parent_preprocessor=parent_preprocessor)
@@ -27,6 +35,7 @@ class ChannelSelector(SignalPreprocessor):
         self.channels_first = channels_first
 
     def process_signal(self, ecg_signal):
+
         if self.channels is None:
             self.channel = np.arange(1, signal.shape[0])
 

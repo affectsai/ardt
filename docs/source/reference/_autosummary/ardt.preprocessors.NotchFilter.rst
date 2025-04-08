@@ -1,12 +1,12 @@
 ..
   class.rst
 
-ardt.datasets.cuads.CuadsTrial
+ardt.preprocessors.NotchFilter
 ==============================
 
-.. currentmodule:: ardt.datasets.cuads
+.. currentmodule:: ardt.preprocessors
 
-.. autoclass:: CuadsTrial
+.. autoclass:: NotchFilter
     :members:
     :show-inheritance:
     :inherited-members:

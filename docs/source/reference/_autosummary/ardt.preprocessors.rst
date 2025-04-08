@@ -1,4 +1,4 @@
-﻿ardt.preprocessors
+ardt.preprocessors
 ==================
 
 .. automodule:: ardt.preprocessors
@@ -12,7 +12,12 @@
 
    ChannelSelector
    FixedDuration
+   LowPass
+   MedianFilter
+   MedianFilterWithLowPass
+   MinMaxScaler
    MultiChannelZScoreNorm
+   NK2ECGCleaner
+   NotchFilter
+   Resample
    SignalPreprocessor
-   filters
-   transformers

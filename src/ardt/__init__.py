@@ -1,3 +1,8 @@
+'''
+Affects Research Data Toolkit (ARDT) is a Python library for working with Affects Research Data.
+
+'''
+
 #  Copyright (c) 2024. Affects AI LLC
 #
 #  Licensed under the Creative Common CC BY-NC-SA 4.0 International License (the "License");

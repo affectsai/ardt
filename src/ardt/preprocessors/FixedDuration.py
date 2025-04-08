@@ -17,20 +17,30 @@ import numpy as np
 from .SignalPreprocessor import SignalPreprocessor
 
 
-class FixedDurationPreprocessor(SignalPreprocessor):
+class FixedDuration(SignalPreprocessor):
+    """
+    Preprocesses the signal to a fixed duration. If signal is less than signal_duration, it will be padded on the
+    left with the padding_value.
+
+    Parameters
+    ----------
+    signal_duration : float
+        Target signal length, in seconds
+
+    sample_rate:
+        target signal sample rate in Hz
+
+    padding_value : float
+        the value to pad incase signal is shorter than the target duration. If None, the mean signal value is used.
+
+    parent_preprocessor : SignalPreprocessor
+        The parent preprocessor of this preprocessor.
+
+    child_preprocessor : SignalPreprocessor
+        The child preprocessor of this preprocessor.
+    """
     def __init__(self, signal_duration=45, sample_rate=256, padding_value=None,
                  parent_preprocessor=None, child_preprocessor=None, verbose=False):
-        """
-        Preprocesses the signal to a fixed duration. If signal is less than signal_duration, it will be padded on the
-        left with the padding_value.
-
-        :param signal_duration: target signal length, in seconds
-        :param sample_rate: target signal sample rate in Hz
-        :param padding_value: the value to pad incase signal is shorter than the target duration. If None, the mean
-        signal value is used.
-        :param parent_preprocessor: the parent preprocessor instance to invoke prior to this preprocessor, used to build
-        preprocessing chains.
-        """
         super().__init__(parent_preprocessor, child_preprocessor)
         self.signal_duration = signal_duration
         self.sample_rate = sample_rate

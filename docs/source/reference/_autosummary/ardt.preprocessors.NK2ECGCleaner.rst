@@ -1,12 +1,12 @@
 ..
   class.rst
 
-ardt.datasets.cuads.CuadsDataset
+ardt.preprocessors.NK2ECGCleaner
 ================================
 
-.. currentmodule:: ardt.datasets.cuads
+.. currentmodule:: ardt.preprocessors
 
-.. autoclass:: CuadsDataset
+.. autoclass:: NK2ECGCleaner
     :members:
     :show-inheritance:
     :inherited-members:

@@ -1,7 +1,3 @@
-"""
-ARDT Configuration
-"""
-
 #  Copyright (c) 2024. Affects AI LLC
 #
 #  Licensed under the Creative Common CC BY-NC-SA 4.0 International License (the "License");
@@ -40,11 +36,13 @@ default_config = {
 
 ardt_logger = logging.getLogger('ardt')
 config_path = os.environ.get('ARDT_CONFIG_PATH', str(os.path.join(os.getcwd(), 'ardt_config.yaml')))
+
 if not os.path.exists(config_path):
     ardt_logger.error(f"Config file {config_path} does not exist. Please create it or set ARDT_CONFIG_PATH")
     user_config = None
+else:
+    with open(config_path, 'r') as f:
+        user_config = yaml.safe_load(f)
 
-with open(config_path, 'r') as f:
-    user_config = yaml.safe_load(f)
-
+#: ARDT Configuration Dict
 config = user_config if user_config is not None else default_config

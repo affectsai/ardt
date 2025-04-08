@@ -1,12 +1,12 @@
 ..
   class.rst
 
-ardt.preprocessors.ChannelSelector
-==================================
+ardt.preprocessors.Resample
+===========================
 
 .. currentmodule:: ardt.preprocessors
 
-.. autoclass:: ChannelSelector
+.. autoclass:: Resample
     :members:
     :show-inheritance:
     :inherited-members:

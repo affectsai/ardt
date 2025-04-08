@@ -1,12 +1,12 @@
+..
+  class.rst
+
 ardt.preprocessors.FixedDuration
 ================================
 
-.. automodule:: ardt.preprocessors.FixedDuration
+.. currentmodule:: ardt.preprocessors
 
-   
-   .. rubric:: Classes
-
-   .. autosummary::
-   
-      FixedDurationPreprocessor
-   
+.. autoclass:: FixedDuration
+    :members:
+    :show-inheritance:
+    :inherited-members:

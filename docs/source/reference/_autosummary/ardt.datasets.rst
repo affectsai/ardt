@@ -1,4 +1,4 @@
-﻿ardt.datasets
+ardt.datasets
 =============
 
 .. automodule:: ardt.datasets
@@ -11,9 +11,11 @@
    :recursive:
 
    AERDataset
+   AERDerivedSignal
    AERTrial
+   AERTrialFilter
    MultiDataset
-   TFDatasetWrapper
    ascertain
    cuads
    dreamer
+   ml

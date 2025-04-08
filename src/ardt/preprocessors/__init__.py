@@ -14,10 +14,11 @@
 
 from .SignalPreprocessor import SignalPreprocessor
 from .ChannelSelector import ChannelSelector
-from .FixedDuration import FixedDurationPreprocessor
+from .FixedDuration import FixedDuration, FixedDuration as FixedDurationPreprocessor
 from .MultiChannelZScoreNorm import MultiChannelECGZScoreNormalization
-from .neurokit import NK2ECGCleaner
-from .medfilt import MedianFilterWith35HzLowPass, MedianFilter
-from .notch_filter import NotchFilter
-from .resample import Resample
-from .lowpass import LowPass
+from .NK2ECGCleaner import NK2ECGCleaner
+from .MedianFilter import MedianFilter
+from .MedianFilterWithLowPass import MedianFilterWithLowPass, MedianFilterWithLowPass as MedianFilterWith35HzLowPass
+from .NotchFilter import NotchFilter
+from .Resample import Resample
+from .LowPass import LowPass
