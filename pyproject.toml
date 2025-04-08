@@ -34,9 +34,9 @@ dependencies = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/affectsai/ardt"
+Homepage = "https://affects.ai/ardt"
 Issues = "https://github.com/affectsai/ardt/issues"
-Documentation = "https://affects.ai/ardt"
+Source = "https://github.com/affectsai/ardt"
 
 
 [tool.hatch.version]
