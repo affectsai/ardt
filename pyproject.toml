@@ -36,6 +36,8 @@ dependencies = [
 [project.urls]
 Homepage = "https://github.com/affectsai/ardt"
 Issues = "https://github.com/affectsai/ardt/issues"
+Documentation = "https://affects.ai/ardt"
+
 
 [tool.hatch.version]
 path = "src/ardt/__about__.py"
