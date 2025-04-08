@@ -1,0 +1,33 @@
+# This CITATION.cff file was generated with cffinit.
+# Visit https://bit.ly/cffinit to generate yours today!
+
+cff-version: 1.2.0
+title: Affective Research Dataset Toolkit (ARDT)
+message: >-
+  If you use this software, please cite it using the
+  metadata from this file.
+type: software
+authors:
+  - given-names: Timothy
+    family-names: Sweeney-Fanelli
+    email: tim@affects.ai
+    affiliation: 'Affects AI, LLC'
+    orcid: 'https://orcid.org/0009-0007-8206-1542'
+  - name: 'Affects AI, LLC'
+    city: Concord
+    country: US
+    post-code: '03301'
+identifiers:
+  - type: doi
+    value: 10.5281/zenodo.15148009
+repository-code: 'https://github.com/affectsai/ardt/tree/v0.5.1'
+abstract: >-
+  AARDT, pronouced "art," is a utility library for working
+  with AER Datasets available to the academic community for
+  research in automated emotion recognition.
+keywords:
+  - affective computing
+license: CC-BY-SA-4.0
+commit: 4e58d77583a7ee371bd388baf427a8898c7563f5
+version: v0.5.1
+date-released: '2025-04-04'
